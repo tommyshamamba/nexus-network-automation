@@ -1,0 +1,85 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>NEXUS compliance report</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:2rem;color:#1f2328}
+h1{font-size:1.4rem} h2{font-size:1.1rem;margin-top:2rem}
+table{border-collapse:collapse;width:100%;margin:.5rem 0 1rem}
+th,td{border:1px solid #d0d7de;padding:.35rem .5rem;text-align:left;vertical-align:top}
+td{font-size:.9rem}
+th{background:#f6f8fa} code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem}
+pre{margin:0;white-space:pre-wrap}
+.pass{color:#1a7f37;font-weight:600}.fail{color:#cf222e;font-weight:600}.skip{color:#6e7781}
+.sev-critical,.sev-high{color:#cf222e}.sev-medium{color:#9a6700}.sev-low{color:#6e7781}
+.meta{color:#57606a;font-size:.85rem}
+</style></head><body>
+<h1>NEXUS compliance report</h1>
+<p class='meta'>Generated 2026-10-27T07:14:59Z &middot; source: <code>live:ssh</code> &middot; policies: baseline, security, vlans (15 rules)</p>
+<table><tr><th>Devices</th><th>Compliant</th><th>Unreachable/errors</th><th>Checks passed</th><th>Checks failed</th><th>Skipped</th><th>Failures by severity</th></tr>
+<tr><td>4</td><td>2</td><td>1</td><td class='pass'>18</td><td class='fail'>2</td><td>25</td><td><span class='sev-critical'>critical: 1</span>, <span class='sev-high'>high: 1</span>, <span class='sev-medium'>medium: 0</span>, <span class='sev-low'>low: 0</span></td></tr></table>
+<h2>Devices</h2><table><tr><th>Device</th><th>Platform</th><th>Score</th><th>Pass</th><th>Fail</th><th>Skip</th><th>Error</th></tr>
+<tr><td><a href='#dev-access-sw1'>access-sw1</a></td><td>cisco_ios</td><td>77.8%</td><td>7</td><td>2</td><td>6</td><td></td></tr>
+<tr><td><a href='#dev-core-sw1'>core-sw1</a></td><td>arista_eos</td><td>100.0%</td><td>6</td><td>0</td><td>9</td><td></td></tr>
+<tr><td><a href='#dev-edge-rtr1'>edge-rtr1</a></td><td>juniper_junos</td><td>100.0%</td><td>5</td><td>0</td><td>10</td><td></td></tr>
+<tr><td><a href='#dev-lab-sw-offline'>lab-sw-offline</a></td><td>cisco_ios</td><td>n/a</td><td>0</td><td>0</td><td>0</td><td>connect: cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed (&#x27;127.0.0.1&#x27;, 2299)</td></tr>
+</table>
+<h2 id='dev-access-sw1'>access-sw1 <span class='meta'>(cisco_ios)</span></h2>
+<table><tr><th>Rule</th><th>Severity</th><th>Status</th><th>Detail</th><th>Evidence</th><th>Remediation</th></tr>
+<tr><td><code>PASS-001</code><br>No type-0 (cleartext) local passwords</td><td class='sev-critical'>critical</td><td class='fail'>FAIL</td><td>1 forbidden line(s) found</td><td><pre>10: username backup privilege 1 password 0 changeme</pre></td><td>Use &#x27;secret&#x27; (type 8/9 hashing) instead of &#x27;password 0&#x27;.</td></tr>
+<tr><td><code>VTY-001</code><br>Every VTY range has an access-class</td><td class='sev-high'>high</td><td class='fail'>FAIL</td><td>1 of 2 section(s) lack /^access-class \S+ in$/</td><td><pre>line vty 5 15</pre></td><td>Restrict management access with an ACL on every vty range.</td></tr>
+<tr><td><code>BANNER-001</code><br>Login banner present</td><td class='sev-low'>low</td><td class='pass'>PASS</td><td>required line present</td><td><pre>44: banner motd ^C</pre></td><td></td></tr>
+<tr><td><code>LOG-001</code><br>Remote syslog configured</td><td class='sev-medium'>medium</td><td class='pass'>PASS</td><td>required line present</td><td><pre>18: logging host 10.0.0.20</pre></td><td></td></tr>
+<tr><td><code>NTP-001</code><br>At least two NTP servers</td><td class='sev-high'>high</td><td class='pass'>PASS</td><td>2 matching line(s), expected min=2</td><td><pre>15: ntp server 10.0.0.10
+16: ntp server 10.0.0.11</pre></td><td></td></tr>
+<tr><td><code>SSH-001</code><br>SSH version 2 enforced</td><td class='sev-high'>high</td><td class='pass'>PASS</td><td>required line present</td><td><pre>13: ip ssh version 2</pre></td><td></td></tr>
+<tr><td><code>TELNET-001</code><br>Telnet not accepted on VTY lines</td><td class='sev-critical'>critical</td><td class='pass'>PASS</td><td>no forbidden lines</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>VLAN-001</code><br>Standard VLANs defined (10 servers, 20 storage, 99 mgmt)</td><td class='sev-medium'>medium</td><td class='pass'>PASS</td><td>VLAN(s) 10, 20, 99 defined</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>VLAN-002</code><br>Retired VLANs not present</td><td class='sev-low'>low</td><td class='pass'>PASS</td><td>no forbidden VLANs defined</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>BANNER-002</code><br>Login banner present (Junos)</td><td class='sev-low'>low</td><td class='skip'>SKIP</td><td>not applicable to cisco_ios</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>LOG-002</code><br>Remote syslog configured (Junos)</td><td class='sev-medium'>medium</td><td class='skip'>SKIP</td><td>not applicable to cisco_ios</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>NTP-002</code><br>At least two NTP servers (Junos)</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to cisco_ios</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>SSH-002</code><br>SSH v2 enforced (Junos)</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to cisco_ios</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>TELNET-002</code><br>Telnet management disabled (EOS)</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to cisco_ios</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>TELNET-003</code><br>Telnet service not enabled (Junos)</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to cisco_ios</td><td><pre></pre></td><td></td></tr>
+</table>
+<h2 id='dev-core-sw1'>core-sw1 <span class='meta'>(arista_eos)</span></h2>
+<table><tr><th>Rule</th><th>Severity</th><th>Status</th><th>Detail</th><th>Evidence</th><th>Remediation</th></tr>
+<tr><td><code>BANNER-001</code><br>Login banner present</td><td class='sev-low'>low</td><td class='pass'>PASS</td><td>required line present</td><td><pre>11: banner motd</pre></td><td></td></tr>
+<tr><td><code>LOG-001</code><br>Remote syslog configured</td><td class='sev-medium'>medium</td><td class='pass'>PASS</td><td>required line present</td><td><pre>8: logging host 10.0.0.20</pre></td><td></td></tr>
+<tr><td><code>NTP-001</code><br>At least two NTP servers</td><td class='sev-high'>high</td><td class='pass'>PASS</td><td>2 matching line(s), expected min=2</td><td><pre>5: ntp server 10.0.0.10 iburst
+6: ntp server 10.0.0.11</pre></td><td></td></tr>
+<tr><td><code>TELNET-002</code><br>Telnet management disabled (EOS)</td><td class='sev-critical'>critical</td><td class='pass'>PASS</td><td>all 1 section(s) compliant</td><td><pre>management telnet</pre></td><td></td></tr>
+<tr><td><code>VLAN-001</code><br>Standard VLANs defined (10 servers, 20 storage, 99 mgmt)</td><td class='sev-medium'>medium</td><td class='pass'>PASS</td><td>VLAN(s) 10, 20, 99 defined</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>VLAN-002</code><br>Retired VLANs not present</td><td class='sev-low'>low</td><td class='pass'>PASS</td><td>no forbidden VLANs defined</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>BANNER-002</code><br>Login banner present (Junos)</td><td class='sev-low'>low</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>LOG-002</code><br>Remote syslog configured (Junos)</td><td class='sev-medium'>medium</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>NTP-002</code><br>At least two NTP servers (Junos)</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>PASS-001</code><br>No type-0 (cleartext) local passwords</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>SSH-001</code><br>SSH version 2 enforced</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>SSH-002</code><br>SSH v2 enforced (Junos)</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>TELNET-001</code><br>Telnet not accepted on VTY lines</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>TELNET-003</code><br>Telnet service not enabled (Junos)</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>VTY-001</code><br>Every VTY range has an access-class</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to arista_eos</td><td><pre></pre></td><td></td></tr>
+</table>
+<h2 id='dev-edge-rtr1'>edge-rtr1 <span class='meta'>(juniper_junos)</span></h2>
+<table><tr><th>Rule</th><th>Severity</th><th>Status</th><th>Detail</th><th>Evidence</th><th>Remediation</th></tr>
+<tr><td><code>BANNER-002</code><br>Login banner present (Junos)</td><td class='sev-low'>low</td><td class='pass'>PASS</td><td>required line present</td><td><pre>3: set system login message &quot;Authorized access only. Activity on this device is logged.&quot;</pre></td><td></td></tr>
+<tr><td><code>LOG-002</code><br>Remote syslog configured (Junos)</td><td class='sev-medium'>medium</td><td class='pass'>PASS</td><td>required line present</td><td><pre>8: set system syslog host 10.0.0.20 any notice</pre></td><td></td></tr>
+<tr><td><code>NTP-002</code><br>At least two NTP servers (Junos)</td><td class='sev-high'>high</td><td class='pass'>PASS</td><td>2 matching line(s), expected min=2</td><td><pre>6: set system ntp server 10.0.0.10
+7: set system ntp server 10.0.0.11</pre></td><td></td></tr>
+<tr><td><code>SSH-002</code><br>SSH v2 enforced (Junos)</td><td class='sev-high'>high</td><td class='pass'>PASS</td><td>required line present</td><td><pre>4: set system services ssh protocol-version v2</pre></td><td></td></tr>
+<tr><td><code>TELNET-003</code><br>Telnet service not enabled (Junos)</td><td class='sev-critical'>critical</td><td class='pass'>PASS</td><td>no forbidden lines</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>BANNER-001</code><br>Login banner present</td><td class='sev-low'>low</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>LOG-001</code><br>Remote syslog configured</td><td class='sev-medium'>medium</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>NTP-001</code><br>At least two NTP servers</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>PASS-001</code><br>No type-0 (cleartext) local passwords</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>SSH-001</code><br>SSH version 2 enforced</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>TELNET-001</code><br>Telnet not accepted on VTY lines</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>TELNET-002</code><br>Telnet management disabled (EOS)</td><td class='sev-critical'>critical</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>VLAN-001</code><br>Standard VLANs defined (10 servers, 20 storage, 99 mgmt)</td><td class='sev-medium'>medium</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>VLAN-002</code><br>Retired VLANs not present</td><td class='sev-low'>low</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+<tr><td><code>VTY-001</code><br>Every VTY range has an access-class</td><td class='sev-high'>high</td><td class='skip'>SKIP</td><td>not applicable to juniper_junos</td><td><pre></pre></td><td></td></tr>
+</table>
+<h2 id='dev-lab-sw-offline'>lab-sw-offline <span class='meta'>(cisco_ios)</span></h2>
+<p class='fail'>Not evaluated: connect: cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed (&#x27;127.0.0.1&#x27;, 2299)</p>
+</body></html>

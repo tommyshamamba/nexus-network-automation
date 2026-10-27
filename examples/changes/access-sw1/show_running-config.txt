@@ -1,0 +1,60 @@
+Building configuration...
+
+Current configuration : 1902 bytes
+!
+! Last configuration change at 16:40:02 UTC Mon Oct 26 2026 by netops
+!
+version 17.9
+service timestamps log datetime msec
+service password-encryption
+!
+hostname access-sw1
+!
+username netops privilege 15 secret 9 $9$labfixture$REDACTED
+username backup privilege 1 password 0 changeme
+!
+ip domain name lab.example.net
+ip ssh version 2
+!
+ntp server 10.0.0.10
+ntp server 10.0.0.11
+!
+logging host 10.0.0.20
+!
+vlan 10
+ name SERVERS
+!
+vlan 20
+ name STORAGE
+!
+vlan 99
+ name MGMT
+!
+interface GigabitEthernet1/0/1
+ description uplink-core-sw1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,99
+!
+interface GigabitEthernet1/0/2
+ description server-01
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+banner motd ^C
+Authorized access only. Activity on this device is logged.
+^C
+!
+line con 0
+ exec-timeout 10 0
+line vty 0 4
+ access-class MGMT-ONLY in
+ transport input ssh
+line vty 5 15
+ transport input ssh
+!
+end

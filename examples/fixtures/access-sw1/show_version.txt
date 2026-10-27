@@ -1,0 +1,2 @@
+Cisco IOS XE Software, Version 17.09.04a
+access-sw1 uptime is 3 weeks, 1 day, 2 hours

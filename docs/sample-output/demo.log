@@ -1,0 +1,110 @@
+
+==> starting mock devices from /workspace/nexus/demo-out/lab
+mock device access-sw1     ssh://127.0.0.1:2201
+mock device core-sw1       ssh://127.0.0.1:2202
+mock device edge-rtr1      ssh://127.0.0.1:2203
+
+==> nexus inventory --probe
+NAME           HOST                   PLATFORM       GROUPS           TAGS
+access-sw1     127.0.0.1:2201         cisco_ios      access           site=dfw1,role=access  [reachable]
+core-sw1       127.0.0.1:2202         arista_eos     core             site=dfw1,role=core  [reachable]
+edge-rtr1      127.0.0.1:2203         juniper_junos  edge             site=dfw1,role=edge  [reachable]
+lab-sw-offline 127.0.0.1:2299         cisco_ios      access           site=dfw1,role=access  [unreachable (ConnectionRefusedError)]
+
+4 device(s)
+
+==> nexus backup (first run)
+WARNING nexus.collector: lab-sw-offline: giving up after 2 attempt(s): cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed ('127.0.0.1', 2299)
+access-sw1     new        attempts=1  
+core-sw1       new        attempts=1  
+edge-rtr1      new        attempts=1  
+lab-sw-offline failed     attempts=2  cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed ('127.0.0.1', 2299)
+
+3 new, 0 changed, 0 unchanged, 1 failed -> /workspace/nexus/demo-out/backups; git commit 97e4fec
+
+==> simulating a change on access-sw1, then backing up again
+WARNING nexus.collector: lab-sw-offline: giving up after 2 attempt(s): cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed ('127.0.0.1', 2299)
+access-sw1     changed    attempts=1  +6 -2
+--- a/access-sw1.cfg
++++ b/access-sw1.cfg
+@@ -13,6 +13,7 @@
+ ip ssh version 2
+ !
+ ntp server 10.0.0.10
++ntp server 10.0.0.11
+ !
+ logging host 10.0.0.20
+ !
+@@ -22,10 +23,13 @@
+ vlan 20
+  name STORAGE
+ !
++vlan 99
++ name MGMT
++!
+ interface GigabitEthernet1/0/1
+  description uplink-core-sw1
+  switchport mode trunk
+- switchport trunk allowed vlan 10,20
++ switchport trunk allowed vlan 10,20,99
+ !
+ interface GigabitEthernet1/0/2
+  description server-01
+@@ -45,7 +49,7 @@
+  exec-timeout 10 0
+ line vty 0 4
+  access-class MGMT-ONLY in
+- transport input ssh telnet
++ transport input ssh
+ line vty 5 15
+  transport input ssh
+ !
+core-sw1       unchanged  attempts=1  
+edge-rtr1      unchanged  attempts=1  
+lab-sw-offline failed     attempts=2  cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed ('127.0.0.1', 2299)
+
+0 new, 1 changed, 2 unchanged, 1 failed -> /workspace/nexus/demo-out/backups; git commit a4e8c98
+
+==> nexus comply (live, over SSH)
+WARNING nexus.collector: lab-sw-offline: giving up after 2 attempt(s): cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed ('127.0.0.1', 2299)
+DEVICE         PLATFORM         SCORE  PASS  FAIL  SKIP  NOTE
+access-sw1     cisco_ios        77.8%     7     2     6  VTY-001, PASS-001
+core-sw1       arista_eos      100.0%     6     0     9  
+edge-rtr1      juniper_junos   100.0%     5     0    10  
+lab-sw-offline cisco_ios          n/a     0     0     0  connect: cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed ('127.0.0.1', 2299)
+
+2/4 devices compliant; 2 failed checks (high=1, critical=1); 1 not evaluated
+
+==> nexus health
+host <host redacted>  window 1.0s  status OK  default-route yes
+IFACE           STATE       MTU         RX         TX  DROPS(new)  ERRS(new)
+br-52031e74145a DOWN       1500       0bps       0bps           0          0
+docker0         DOWN       1500       0bps       0bps           0          0
+enp0s3          UP         1500    2.1Kbps    2.2Kbps           0          0
+lo              UNKNOWN   65536  654.0Kbps  654.0Kbps           0          0
+
+[INFO    ] bridge_no_ports          br-52031e74145a bridge is up but has no active member ports
+[INFO    ] bridge_no_ports          docker0      bridge is up but has no active member ports
+[INFO    ] route_via_down_link      docker0      route 172.17.0.0/16 uses a link that is down
+[INFO    ] route_via_down_link      br-52031e74145a route 172.19.0.0/16 uses a link that is down
+(unavailable data sources: ethtool)
+
+==> nexus pcap
+/workspace/nexus/examples/pcap/sample.pcap  (engine: c)
+packets 204  wire bytes 155693  captured bytes 155173  span 0.472s
+  ipv4=176  ipv6=20  arp=8  other_l3=0  tcp=144  udp=38  icmp=14  other_l4=0  vlan_tagged=34  qinq=6  fragments=2  bad_ipv4_csum=1  truncated=1  malformed=0
+
+flows 12 (untracked: 0); top 5 by bytes:
+  tcp                  10.0.10.5:51514 -> 10.0.20.8:443                      95 pkts    119130 B
+  tcp                  10.0.20.11:7000 -> 10.0.20.12:7001                    28 pkts     24024 B
+  tcp              [2001:db8::1]:40000 -> [2001:db8::2]:8443                 20 pkts      7480 B
+  udp                  10.0.10.5:53001 -> 10.0.0.53:53                       13 pkts      1066 B
+  udp                   192.0.2.1:4789 -> 192.0.2.2:4789                      6 pkts       900 B
+
+==> artifacts
+/workspace/nexus/demo-out/backups/access-sw1.cfg
+/workspace/nexus/demo-out/backups/core-sw1.cfg
+/workspace/nexus/demo-out/backups/edge-rtr1.cfg
+/workspace/nexus/demo-out/reports/compliance.html
+/workspace/nexus/demo-out/reports/compliance.json
+/workspace/nexus/demo-out/reports/health.json

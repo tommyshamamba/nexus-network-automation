@@ -1,0 +1,49 @@
+# Lab inventory used by the demo and integration tests.
+# The fake devices come from `nexus mock-devices --fixtures examples/fixtures`
+# (ports are assigned in sorted-name order starting at 2201).
+# Credentials: the password is read from the NEXUS_PASSWORD environment
+# variable at connect time; it never appears in this file.
+defaults:
+  username: ${NEXUS_USERNAME:-netops}
+  password_env: NEXUS_PASSWORD
+  timeout: 5
+  # Lab only: the fake devices generate a throwaway host key on every start.
+  # Leave this at the default (true) for real equipment.
+  strict_host_key: false
+
+groups:
+  core:
+    tags: {role: core}
+  access:
+    tags: {role: access}
+  edge:
+    tags: {role: edge}
+
+devices:
+  - name: access-sw1
+    host: ${NEXUS_LAB_HOST:-127.0.0.1}
+    port: 2201
+    platform: cisco_ios
+    groups: [access]
+    tags: {site: dfw1, role: access}
+  - name: core-sw1
+    host: ${NEXUS_LAB_HOST:-127.0.0.1}
+    port: 2202
+    platform: arista_eos
+    groups: [core]
+    tags: {site: dfw1, role: core}
+  - name: edge-rtr1
+    host: ${NEXUS_LAB_HOST:-127.0.0.1}
+    port: 2203
+    platform: juniper_junos
+    groups: [edge]
+    tags: {site: dfw1, role: edge}
+  # Nothing listens here on purpose: shows retries and how an unreachable
+  # device is reported instead of aborting the run.
+  - name: lab-sw-offline
+    host: ${NEXUS_LAB_HOST:-127.0.0.1}
+    port: 2299
+    platform: cisco_ios
+    groups: [access]
+    timeout: 2
+    tags: {site: dfw1, role: access}

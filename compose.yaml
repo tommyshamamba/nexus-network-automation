@@ -1,0 +1,23 @@
+# Demo only: three fake SSH "devices" plus a runner that backs them up,
+# diffs a change, and runs the compliance policies.
+#   NEXUS_PASSWORD=$(openssl rand -hex 12) docker compose up --build --abort-on-container-exit
+services:
+  devices:
+    build: .
+    entrypoint: ["sh", "-c", "cp -r examples/fixtures/. /lab/ && exec nexus mock-devices --fixtures /lab --listen 0.0.0.0 --base-port 2201"]
+    environment:
+      NEXUS_PASSWORD: ${NEXUS_PASSWORD:?set NEXUS_PASSWORD to any throwaway value}
+    volumes: [lab:/lab]
+  runner:
+    build: .
+    depends_on: [devices]
+    entrypoint: ["bash", "scripts/demo.sh"]
+    environment:
+      NEXUS_PASSWORD: ${NEXUS_PASSWORD:?set NEXUS_PASSWORD to any throwaway value}
+      NEXUS_LAB_HOST: devices
+      DEMO_EXTERNAL_DEVICES: "1"
+      LAB_DIR: /lab
+      OUT: /tmp/demo-out
+    volumes: [lab:/lab]
+volumes:
+  lab:

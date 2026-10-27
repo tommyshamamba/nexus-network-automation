@@ -1,0 +1,21 @@
+host fixture-host  window 2.0s  status CRITICAL  default-route yes
+IFACE           STATE       MTU         RX         TX  DROPS(new)  ERRS(new)
+bond0           UP         9000    4.0Mbps    2.0Mbps           0          7
+docker0         DOWN       1500       0bps       0bps           0          0
+eth0            UP         9000  100.0Mbps   20.0Mbps          50          0
+eth1            DOWN       1500       0bps       0bps           0          0
+eth2            UP         1500    4.0Mbps    2.0Mbps           0          7
+eth3            DOWN       1500       0bps       0bps           0          0
+lo              UNKNOWN   65536    8.0Kbps    8.0Kbps           0          0
+
+[WARNING ] mtu_mismatch             bond0        MTU 9000, expected 1500
+[CRITICAL] errors_increasing        bond0        7 new rx/tx errors in 2.0s
+[INFO    ] bridge_no_ports          docker0      bridge is up but has no active member ports
+[WARNING ] drops_increasing         eth0         50 new drops in 2.0s (0.167% of 30000 packets)
+[WARNING ] nic_counters_increasing  eth0         rx_missed_errors+50
+[CRITICAL] link_down                eth1         administratively up but no carrier / oper state DOWN
+[WARNING ] mtu_member_mismatch      eth2         MTU 1500 differs from master bond0 (9000)
+[CRITICAL] errors_increasing        eth2         7 new rx/tx errors in 2.0s
+[WARNING ] route_via_down_link      eth1         route 10.9.0.0/24 uses a link that is down
+[INFO    ] route_via_down_link      docker0      route 172.17.0.0/16 uses a link that is down
+

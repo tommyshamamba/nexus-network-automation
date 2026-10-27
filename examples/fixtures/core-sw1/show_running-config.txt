@@ -1,0 +1,56 @@
+! Command: show running-config
+! device: core-sw1 (DCS-7050SX3-48YC8, EOS-4.31.2F)
+!
+hostname core-sw1
+ip domain-name lab.example.net
+!
+ntp server 10.0.0.10 iburst
+ntp server 10.0.0.11
+!
+logging host 10.0.0.20
+logging trap informational
+!
+banner motd
+Authorized access only. Activity on this device is logged.
+EOF
+!
+username netops privilege 15 role network-admin secret sha512 $6$labfixture$REDACTED
+!
+management ssh
+   idle-timeout 15
+   no shutdown
+!
+management telnet
+   shutdown
+!
+vlan 10
+   name SERVERS
+!
+vlan 20
+   name STORAGE
+!
+vlan 99
+   name MGMT
+!
+interface Ethernet1
+   description uplink-edge-rtr1
+   mtu 9214
+   no switchport
+   ip address 10.255.0.1/31
+!
+interface Ethernet2
+   description access-sw1
+   switchport mode trunk
+   switchport trunk allowed vlan 10,20,99
+!
+interface Management1
+   ip address 10.0.0.2/24
+!
+ip routing
+!
+router bgp 65001
+   router-id 10.255.255.1
+   neighbor 10.255.0.0 remote-as 65000
+   neighbor 10.255.0.0 description edge-rtr1
+!
+end

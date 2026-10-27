@@ -1,0 +1,57 @@
+policy: security
+rules:
+  - id: SSH-001
+    title: SSH version 2 enforced
+    severity: high
+    platforms: [cisco_ios]
+    type: must_match
+    pattern: '^ip ssh version 2$'
+    remediation: ip ssh version 2
+
+  - id: SSH-002
+    title: SSH v2 enforced (Junos)
+    severity: high
+    platforms: [juniper_junos]
+    type: must_match
+    pattern: '^set system services ssh protocol-version v2$'
+
+  - id: TELNET-001
+    title: Telnet not accepted on VTY lines
+    severity: critical
+    platforms: [cisco_ios]
+    type: must_not_match
+    pattern: '^\s*transport input .*\btelnet\b'
+    remediation: transport input ssh on every line vty range.
+
+  - id: TELNET-002
+    title: Telnet management disabled (EOS)
+    severity: critical
+    platforms: [arista_eos]
+    type: section_must_contain
+    section: '^management telnet$'
+    pattern: '^shutdown$'
+    remediation: management telnet / shutdown
+
+  - id: TELNET-003
+    title: Telnet service not enabled (Junos)
+    severity: critical
+    platforms: [juniper_junos]
+    type: must_not_match
+    pattern: '^set system services telnet'
+
+  - id: VTY-001
+    title: Every VTY range has an access-class
+    severity: high
+    platforms: [cisco_ios]
+    type: section_must_contain
+    section: '^line vty '
+    pattern: '^access-class \S+ in$'
+    remediation: Restrict management access with an ACL on every vty range.
+
+  - id: PASS-001
+    title: No type-0 (cleartext) local passwords
+    severity: critical
+    platforms: [cisco_ios]
+    type: must_not_match
+    pattern: '^username \S+ .*password 0 '
+    remediation: Use 'secret' (type 8/9 hashing) instead of 'password 0'.

@@ -1,0 +1,514 @@
+{
+  "generated_at": "2026-10-27T07:14:59Z",
+  "tool": "nexus comply",
+  "source": "live:ssh",
+  "policies": [
+    "baseline",
+    "security",
+    "vlans"
+  ],
+  "rule_count": 15,
+  "summary": {
+    "devices": 4,
+    "devices_with_errors": 1,
+    "devices_compliant": 2,
+    "pass": 18,
+    "fail": 2,
+    "skip": 25,
+    "failures_by_severity": {
+      "low": 0,
+      "medium": 0,
+      "high": 1,
+      "critical": 1
+    }
+  },
+  "devices": [
+    {
+      "device": "access-sw1",
+      "platform": "cisco_ios",
+      "error": null,
+      "score": 77.8,
+      "counts": {
+        "pass": 7,
+        "fail": 2,
+        "skip": 6
+      },
+      "results": [
+        {
+          "rule_id": "NTP-001",
+          "title": "At least two NTP servers",
+          "severity": "high",
+          "status": "pass",
+          "message": "2 matching line(s), expected min=2",
+          "evidence": [
+            "15: ntp server 10.0.0.10",
+            "16: ntp server 10.0.0.11"
+          ],
+          "remediation": "Configure two or more NTP servers so log timestamps stay correlated."
+        },
+        {
+          "rule_id": "NTP-002",
+          "title": "At least two NTP servers (Junos)",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to cisco_ios",
+          "evidence": [],
+          "remediation": "set system ntp server <addr> for two or more servers."
+        },
+        {
+          "rule_id": "LOG-001",
+          "title": "Remote syslog configured",
+          "severity": "medium",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "18: logging host 10.0.0.20"
+          ],
+          "remediation": "Send logs to the central collector (logging host <addr>)."
+        },
+        {
+          "rule_id": "LOG-002",
+          "title": "Remote syslog configured (Junos)",
+          "severity": "medium",
+          "status": "skip",
+          "message": "not applicable to cisco_ios",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "BANNER-001",
+          "title": "Login banner present",
+          "severity": "low",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "44: banner motd ^C"
+          ],
+          "remediation": "Add a legal/authorised-use banner."
+        },
+        {
+          "rule_id": "BANNER-002",
+          "title": "Login banner present (Junos)",
+          "severity": "low",
+          "status": "skip",
+          "message": "not applicable to cisco_ios",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "SSH-001",
+          "title": "SSH version 2 enforced",
+          "severity": "high",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "13: ip ssh version 2"
+          ],
+          "remediation": "ip ssh version 2"
+        },
+        {
+          "rule_id": "SSH-002",
+          "title": "SSH v2 enforced (Junos)",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to cisco_ios",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "TELNET-001",
+          "title": "Telnet not accepted on VTY lines",
+          "severity": "critical",
+          "status": "pass",
+          "message": "no forbidden lines",
+          "evidence": [],
+          "remediation": "transport input ssh on every line vty range."
+        },
+        {
+          "rule_id": "TELNET-002",
+          "title": "Telnet management disabled (EOS)",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to cisco_ios",
+          "evidence": [],
+          "remediation": "management telnet / shutdown"
+        },
+        {
+          "rule_id": "TELNET-003",
+          "title": "Telnet service not enabled (Junos)",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to cisco_ios",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "VTY-001",
+          "title": "Every VTY range has an access-class",
+          "severity": "high",
+          "status": "fail",
+          "message": "1 of 2 section(s) lack /^access-class \\S+ in$/",
+          "evidence": [
+            "line vty 5 15"
+          ],
+          "remediation": "Restrict management access with an ACL on every vty range."
+        },
+        {
+          "rule_id": "PASS-001",
+          "title": "No type-0 (cleartext) local passwords",
+          "severity": "critical",
+          "status": "fail",
+          "message": "1 forbidden line(s) found",
+          "evidence": [
+            "10: username backup privilege 1 password 0 changeme"
+          ],
+          "remediation": "Use 'secret' (type 8/9 hashing) instead of 'password 0'."
+        },
+        {
+          "rule_id": "VLAN-001",
+          "title": "Standard VLANs defined (10 servers, 20 storage, 99 mgmt)",
+          "severity": "medium",
+          "status": "pass",
+          "message": "VLAN(s) 10, 20, 99 defined",
+          "evidence": [],
+          "remediation": "Define the site-standard VLANs on every L2 switch."
+        },
+        {
+          "rule_id": "VLAN-002",
+          "title": "Retired VLANs not present",
+          "severity": "low",
+          "status": "pass",
+          "message": "no forbidden VLANs defined",
+          "evidence": [],
+          "remediation": ""
+        }
+      ]
+    },
+    {
+      "device": "core-sw1",
+      "platform": "arista_eos",
+      "error": null,
+      "score": 100.0,
+      "counts": {
+        "pass": 6,
+        "fail": 0,
+        "skip": 9
+      },
+      "results": [
+        {
+          "rule_id": "NTP-001",
+          "title": "At least two NTP servers",
+          "severity": "high",
+          "status": "pass",
+          "message": "2 matching line(s), expected min=2",
+          "evidence": [
+            "5: ntp server 10.0.0.10 iburst",
+            "6: ntp server 10.0.0.11"
+          ],
+          "remediation": "Configure two or more NTP servers so log timestamps stay correlated."
+        },
+        {
+          "rule_id": "NTP-002",
+          "title": "At least two NTP servers (Junos)",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": "set system ntp server <addr> for two or more servers."
+        },
+        {
+          "rule_id": "LOG-001",
+          "title": "Remote syslog configured",
+          "severity": "medium",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "8: logging host 10.0.0.20"
+          ],
+          "remediation": "Send logs to the central collector (logging host <addr>)."
+        },
+        {
+          "rule_id": "LOG-002",
+          "title": "Remote syslog configured (Junos)",
+          "severity": "medium",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "BANNER-001",
+          "title": "Login banner present",
+          "severity": "low",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "11: banner motd"
+          ],
+          "remediation": "Add a legal/authorised-use banner."
+        },
+        {
+          "rule_id": "BANNER-002",
+          "title": "Login banner present (Junos)",
+          "severity": "low",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "SSH-001",
+          "title": "SSH version 2 enforced",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": "ip ssh version 2"
+        },
+        {
+          "rule_id": "SSH-002",
+          "title": "SSH v2 enforced (Junos)",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "TELNET-001",
+          "title": "Telnet not accepted on VTY lines",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": "transport input ssh on every line vty range."
+        },
+        {
+          "rule_id": "TELNET-002",
+          "title": "Telnet management disabled (EOS)",
+          "severity": "critical",
+          "status": "pass",
+          "message": "all 1 section(s) compliant",
+          "evidence": [
+            "management telnet"
+          ],
+          "remediation": "management telnet / shutdown"
+        },
+        {
+          "rule_id": "TELNET-003",
+          "title": "Telnet service not enabled (Junos)",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "VTY-001",
+          "title": "Every VTY range has an access-class",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": "Restrict management access with an ACL on every vty range."
+        },
+        {
+          "rule_id": "PASS-001",
+          "title": "No type-0 (cleartext) local passwords",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to arista_eos",
+          "evidence": [],
+          "remediation": "Use 'secret' (type 8/9 hashing) instead of 'password 0'."
+        },
+        {
+          "rule_id": "VLAN-001",
+          "title": "Standard VLANs defined (10 servers, 20 storage, 99 mgmt)",
+          "severity": "medium",
+          "status": "pass",
+          "message": "VLAN(s) 10, 20, 99 defined",
+          "evidence": [],
+          "remediation": "Define the site-standard VLANs on every L2 switch."
+        },
+        {
+          "rule_id": "VLAN-002",
+          "title": "Retired VLANs not present",
+          "severity": "low",
+          "status": "pass",
+          "message": "no forbidden VLANs defined",
+          "evidence": [],
+          "remediation": ""
+        }
+      ]
+    },
+    {
+      "device": "edge-rtr1",
+      "platform": "juniper_junos",
+      "error": null,
+      "score": 100.0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "skip": 10
+      },
+      "results": [
+        {
+          "rule_id": "NTP-001",
+          "title": "At least two NTP servers",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "Configure two or more NTP servers so log timestamps stay correlated."
+        },
+        {
+          "rule_id": "NTP-002",
+          "title": "At least two NTP servers (Junos)",
+          "severity": "high",
+          "status": "pass",
+          "message": "2 matching line(s), expected min=2",
+          "evidence": [
+            "6: set system ntp server 10.0.0.10",
+            "7: set system ntp server 10.0.0.11"
+          ],
+          "remediation": "set system ntp server <addr> for two or more servers."
+        },
+        {
+          "rule_id": "LOG-001",
+          "title": "Remote syslog configured",
+          "severity": "medium",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "Send logs to the central collector (logging host <addr>)."
+        },
+        {
+          "rule_id": "LOG-002",
+          "title": "Remote syslog configured (Junos)",
+          "severity": "medium",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "8: set system syslog host 10.0.0.20 any notice"
+          ],
+          "remediation": ""
+        },
+        {
+          "rule_id": "BANNER-001",
+          "title": "Login banner present",
+          "severity": "low",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "Add a legal/authorised-use banner."
+        },
+        {
+          "rule_id": "BANNER-002",
+          "title": "Login banner present (Junos)",
+          "severity": "low",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "3: set system login message \"Authorized access only. Activity on this device is logged.\""
+          ],
+          "remediation": ""
+        },
+        {
+          "rule_id": "SSH-001",
+          "title": "SSH version 2 enforced",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "ip ssh version 2"
+        },
+        {
+          "rule_id": "SSH-002",
+          "title": "SSH v2 enforced (Junos)",
+          "severity": "high",
+          "status": "pass",
+          "message": "required line present",
+          "evidence": [
+            "4: set system services ssh protocol-version v2"
+          ],
+          "remediation": ""
+        },
+        {
+          "rule_id": "TELNET-001",
+          "title": "Telnet not accepted on VTY lines",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "transport input ssh on every line vty range."
+        },
+        {
+          "rule_id": "TELNET-002",
+          "title": "Telnet management disabled (EOS)",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "management telnet / shutdown"
+        },
+        {
+          "rule_id": "TELNET-003",
+          "title": "Telnet service not enabled (Junos)",
+          "severity": "critical",
+          "status": "pass",
+          "message": "no forbidden lines",
+          "evidence": [],
+          "remediation": ""
+        },
+        {
+          "rule_id": "VTY-001",
+          "title": "Every VTY range has an access-class",
+          "severity": "high",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "Restrict management access with an ACL on every vty range."
+        },
+        {
+          "rule_id": "PASS-001",
+          "title": "No type-0 (cleartext) local passwords",
+          "severity": "critical",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "Use 'secret' (type 8/9 hashing) instead of 'password 0'."
+        },
+        {
+          "rule_id": "VLAN-001",
+          "title": "Standard VLANs defined (10 servers, 20 storage, 99 mgmt)",
+          "severity": "medium",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": "Define the site-standard VLANs on every L2 switch."
+        },
+        {
+          "rule_id": "VLAN-002",
+          "title": "Retired VLANs not present",
+          "severity": "low",
+          "status": "skip",
+          "message": "not applicable to juniper_junos",
+          "evidence": [],
+          "remediation": ""
+        }
+      ]
+    },
+    {
+      "device": "lab-sw-offline",
+      "platform": "cisco_ios",
+      "error": "connect: cannot connect to 127.0.0.1:2299: [Errno 111] Connect call failed ('127.0.0.1', 2299)",
+      "score": null,
+      "counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "results": []
+    }
+  ]
+}

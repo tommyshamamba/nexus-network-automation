@@ -1,0 +1,112 @@
+name: ci
+on:
+  push: {branches: [main]}
+  pull_request:
+permissions:
+  contents: read
+
+jobs:
+  c-lib:
+    name: C library (${{ matrix.cc }}${{ matrix.sanitize == 'ON' && ', ASan+UBSan' || '' }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+        sanitize: ["OFF", "ON"]
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure, build, test
+        env: {CC: "${{ matrix.cc }}"}
+        run: |
+          cmake -S csrc -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+                -DNX_WERROR=ON -DNX_SANITIZE=${{ matrix.sanitize }}
+          cmake --build build
+          ctest --test-dir build --output-on-failure
+      - name: C-only pcap tool on the sample capture
+        run: ./build/nx-pcapstat examples/pcap/sample.pcap
+
+  python:
+    name: Python ${{ matrix.python }} (ruff, mypy, pytest)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: {python: ["3.12", "3.13"]}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Build libnexus_pkt for the ctypes binding
+        run: cmake -S csrc -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build
+      - run: pip install -e '.[dev]'
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+      - name: pytest (C engine required, so C/Python differential tests cannot silently skip)
+        env:
+          NEXUS_PKT_LIB: ${{ github.workspace }}/build/libnexus_pkt.so
+          NEXUS_REQUIRE_CLIB: "1"
+        run: pytest -q -rs
+
+  demo:
+    name: End-to-end demo (mock SSH devices)
+    runs-on: ubuntu-latest
+    needs: [python]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build ethtool
+      - run: cmake -S csrc -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build
+      - run: pip install -e .
+      - name: Run scripts/demo.sh
+        env: {NEXUS_PKT_LIB: "${{ github.workspace }}/build/libnexus_pkt.so"}
+        run: |
+          ./scripts/demo.sh 2>&1 | tee demo.log
+          grep -q "0 new, 1 changed, 2 unchanged, 1 failed" demo.log
+          grep -q "2/4 devices compliant" demo.log
+          { echo '```'; cat demo.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo-reports
+          path: demo-out/reports/
+
+  docker:
+    name: Docker image + compose demo
+    runs-on: ubuntu-latest
+    needs: [python]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t nexus:ci .
+      - name: Image runs as non-root and has the C engine
+        run: |
+          test "$(docker run --rm --entrypoint id nexus:ci -u)" = "10001"
+          docker run --rm nexus:ci pcap examples/pcap/sample.pcap | grep -q "engine: c"
+      - name: docker compose demo (devices container <-> runner container)
+        run: |
+          export NEXUS_PASSWORD="ci-$(openssl rand -hex 8)"
+          docker compose up --build --abort-on-container-exit --exit-code-from runner 2>&1 | tee compose.log
+          grep -q "0 new, 1 changed, 2 unchanged, 1 failed" compose.log
+          docker compose down -v
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: gitleaks (full history)
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar xz gitleaks
+          ./gitleaks git --no-banner --redact -v .
+
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install pip-audit
+      - name: Audit runtime dependencies
+        run: pip-audit --progress-spinner off .

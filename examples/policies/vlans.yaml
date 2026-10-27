@@ -1,0 +1,16 @@
+policy: vlans
+rules:
+  - id: VLAN-001
+    title: Standard VLANs defined (10 servers, 20 storage, 99 mgmt)
+    severity: medium
+    platforms: [cisco_ios, arista_eos]
+    type: vlans_present
+    vlans: [10, 20, 99]
+    remediation: Define the site-standard VLANs on every L2 switch.
+
+  - id: VLAN-002
+    title: Retired VLANs not present
+    severity: low
+    platforms: [cisco_ios, arista_eos]
+    type: vlans_absent
+    vlans: [666, 999]

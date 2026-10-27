@@ -1,0 +1,3 @@
+Hostname: edge-rtr1
+Model: mx204
+Junos: 23.4R1.9

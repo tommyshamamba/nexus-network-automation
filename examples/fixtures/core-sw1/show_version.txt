@@ -1,0 +1,3 @@
+Arista DCS-7050SX3-48YC8
+Software image version: 4.31.2F
+Uptime: 12 days, 3 hours and 4 minutes

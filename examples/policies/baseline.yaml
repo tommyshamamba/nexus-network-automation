@@ -1,0 +1,51 @@
+policy: baseline
+# Management-plane hygiene expected on every device. Patterns are Python
+# regexes applied line by line to the normalised running config.
+rules:
+  - id: NTP-001
+    title: At least two NTP servers
+    severity: high
+    platforms: [cisco_ios, arista_eos]
+    type: count
+    pattern: '^ntp server \S+'
+    min: 2
+    remediation: Configure two or more NTP servers so log timestamps stay correlated.
+
+  - id: NTP-002
+    title: At least two NTP servers (Junos)
+    severity: high
+    platforms: [juniper_junos]
+    type: count
+    pattern: '^set system ntp server \S+'
+    min: 2
+    remediation: set system ntp server <addr> for two or more servers.
+
+  - id: LOG-001
+    title: Remote syslog configured
+    severity: medium
+    platforms: [cisco_ios, arista_eos]
+    type: must_match
+    pattern: '^logging host \S+'
+    remediation: Send logs to the central collector (logging host <addr>).
+
+  - id: LOG-002
+    title: Remote syslog configured (Junos)
+    severity: medium
+    platforms: [juniper_junos]
+    type: must_match
+    pattern: '^set system syslog host \S+'
+
+  - id: BANNER-001
+    title: Login banner present
+    severity: low
+    platforms: [cisco_ios, arista_eos]
+    type: must_match
+    pattern: '^banner (motd|login)\b'
+    remediation: Add a legal/authorised-use banner.
+
+  - id: BANNER-002
+    title: Login banner present (Junos)
+    severity: low
+    platforms: [juniper_junos]
+    type: must_match
+    pattern: '^set system login message '

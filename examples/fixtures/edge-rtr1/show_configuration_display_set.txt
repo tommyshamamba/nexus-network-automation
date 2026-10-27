@@ -1,0 +1,17 @@
+## Last commit: 2026-10-20 14:03:11 UTC by netops
+set version 23.4R1.9
+set system host-name edge-rtr1
+set system login message "Authorized access only. Activity on this device is logged."
+set system services ssh protocol-version v2
+set system services ssh root-login deny
+set system ntp server 10.0.0.10
+set system ntp server 10.0.0.11
+set system syslog host 10.0.0.20 any notice
+set interfaces xe-0/0/0 description uplink-core-sw1
+set interfaces xe-0/0/0 mtu 9192
+set interfaces xe-0/0/0 unit 0 family inet address 10.255.0.0/31
+set interfaces lo0 unit 0 family inet address 10.255.255.0/32
+set routing-options autonomous-system 65000
+set protocols bgp group core type external
+set protocols bgp group core peer-as 65001
+set protocols bgp group core neighbor 10.255.0.1

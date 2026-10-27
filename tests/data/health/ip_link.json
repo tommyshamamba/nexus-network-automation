@@ -1,0 +1,9 @@
+[
+ {"ifindex":1,"ifname":"lo","flags":["LOOPBACK","UP","LOWER_UP"],"mtu":65536,"operstate":"UNKNOWN"},
+ {"ifindex":2,"ifname":"eth0","flags":["BROADCAST","MULTICAST","UP","LOWER_UP"],"mtu":9000,"operstate":"UP"},
+ {"ifindex":3,"ifname":"eth1","flags":["NO-CARRIER","BROADCAST","MULTICAST","UP"],"mtu":1500,"operstate":"DOWN"},
+ {"ifindex":4,"ifname":"eth2","flags":["BROADCAST","MULTICAST","SLAVE","UP","LOWER_UP"],"mtu":1500,"master":"bond0","operstate":"UP"},
+ {"ifindex":5,"ifname":"bond0","flags":["BROADCAST","MULTICAST","MASTER","UP","LOWER_UP"],"mtu":9000,"operstate":"UP","linkinfo":{"info_kind":"bond"}},
+ {"ifindex":6,"ifname":"docker0","flags":["NO-CARRIER","BROADCAST","MULTICAST","UP"],"mtu":1500,"operstate":"DOWN","linkinfo":{"info_kind":"bridge"}},
+ {"ifindex":7,"ifname":"eth3","flags":["BROADCAST","MULTICAST"],"mtu":1500,"operstate":"DOWN"}
+]
