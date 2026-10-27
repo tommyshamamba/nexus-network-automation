@@ -15,7 +15,7 @@ jobs:
         cc: [gcc, clang]
         sanitize: ["OFF", "ON"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Configure, build, test
         env: {CC: "${{ matrix.cc }}"}
@@ -34,8 +34,8 @@ jobs:
       fail-fast: false
       matrix: {python: ["3.12", "3.13"]}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: {python-version: "${{ matrix.python }}"}
       - run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Build libnexus_pkt for the ctypes binding
@@ -55,8 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [python]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: {python-version: "3.12"}
       - run: sudo apt-get update && sudo apt-get install -y ninja-build ethtool
       - run: cmake -S csrc -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build
@@ -68,7 +68,7 @@ jobs:
           grep -q "0 new, 1 changed, 2 unchanged, 1 failed" demo.log
           grep -q "2/4 devices compliant" demo.log
           { echo '```'; cat demo.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: demo-reports
           path: demo-out/reports/
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [python]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: docker build -t nexus:ci .
       - name: Image runs as non-root and has the C engine
         run: |
@@ -94,7 +94,7 @@ jobs:
   gitleaks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: {fetch-depth: 0}
       - name: gitleaks (full history)
         run: |
@@ -104,8 +104,8 @@ jobs:
   pip-audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: {python-version: "3.12"}
       - run: pip install pip-audit
       - name: Audit runtime dependencies
