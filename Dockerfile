@@ -6,6 +6,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY csrc/ csrc/
+COPY examples/pcap/ examples/pcap/
 RUN cmake -S csrc -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DNX_WERROR=ON \
  && cmake --build build \
  && ctest --test-dir build --output-on-failure
